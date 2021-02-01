@@ -1,6 +1,6 @@
 # originally created on Thu Dec 31, 2020 by John Exterkamp
 # this program reads the grades from schoology
-# Made from Dec 31 3:00pm to Jan 26 8:22 2021
+# Made from Dec 31 3:00pm to Feb 1 2021
 #from pyvirtualdisplay import Display
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -23,10 +23,6 @@ import speech_recognition as sr
 # more about html and id tags
 # selenium
 # f'' formatting only works in 3.7 and above
-
-# I need homebrew
-
-
 
 
 def getCourseGrades(email='', password='',sayGrade=False, alertGrade=True):
@@ -68,11 +64,6 @@ def getCourseGrades(email='', password='',sayGrade=False, alertGrade=True):
     element.click()
 
     # up coming events code
-    time.sleep(1)
-
-    #upcomingList = driver.find_elements_by_xpath('//div[@class="upcoming-events upcoming-events-wrapper sEventUpcoming-processed"]//div[@class="upcoming-list"]')
-    #for i in range(len(upcomingList)):
-
 
     element = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, '//a[@href="/grades/grades"]'))
@@ -85,12 +76,8 @@ def getCourseGrades(email='', password='',sayGrade=False, alertGrade=True):
 
     classes = driver.find_elements_by_xpath('//div[@class="gradebook-course hierarchical-grading-report show-title interactive sGradesGradebook-processed sGradeHierarchicalReport-processed"]') #  overarching class div
     # classTitles = driver.find_elements_by_xpath('//a[@class="sExtlink-processed"][@href="#"]')  #  TIP: this is how you list multiple atributes in xpath you use //<name>[@<name>="value"][repeat]  title for the class
-    # secondaryCourseGrades = driver.find_elements_by_xpath('//span[@class="course-grade-value"]//span[@class="awarded-grade"]//span[@class="numeric-grade secondary-grade"]//span[@class="rounded-grade"]')  # super cool thing I found xpath is stackable with order from parent --> child
-    # primaryCourseGrades = driver.find_elements_by_xpath('//span[@class="course-grade-value"]//span[@class="awarded-grade"]//span[@class="numeric-grade primary-grade"]//span[@class="rounded-grade"]')
-    # noGrades = driver.find_elements_by_xpath('//span[@class="course-grade-value"]//span[@class="no-grade"]')
+    # super cool thing I found xpath is stackable with order from parent --> child
 
-    # print(len(classes))
-    # print(len(classTitles))
     classTitles = []
 
     for i in range(len(classes)):
@@ -110,7 +97,6 @@ def getCourseGrades(email='', password='',sayGrade=False, alertGrade=True):
                 grade = 'N/A'
                 print(grade + ' | ' + classTitle)
                 grades.update({classTitle : grade})
-                print('stinks')
                 break # if true and it makes through without errors it exits the while loop
             except:
                 pass
@@ -137,8 +123,7 @@ def getCourseGrades(email='', password='',sayGrade=False, alertGrade=True):
             try:
                 qg = []
                 # classes with no course grades... I just now relized this one fuction could do all the classes... ughh
-
-                # driver.find_elements_by_xpath(//[@id="{classId}"]/div[@class="gradebook-course-title"]/
+                
                 qGradeList = driver.find_elements_by_xpath(f'//div[@id="{classId}"]//tr[@class="report-row period-row has-children childrenCollapsed"]//span[@class="rounded-grade"]')
                 oneGrade = False
                 if len(qGradeList) == 0:
@@ -194,7 +179,7 @@ def getCourseGrades(email='', password='',sayGrade=False, alertGrade=True):
         for i in range(len(classes)):
             classTitle = classTitles[i].split(' ')[0]
             if grades[classTitles[i]].split('%')[0] != 'N/A':
-                sayString = f' your average grade for {classTitle} is, ' + str(round(float(grades[classTitles[i]].split('%')[0]), 2)) + ' percent.' + sayString
+                sayString = f' your average grade for {classTitle} is, ' + str(round(float(grades[classTitles[i]].split('%')[0]))) + ' percent.' + sayString
             else:
                 sayString = f'your average grade for {classTitle} is, {grades[classTitles[i]]}.' + sayString
             pass
@@ -202,6 +187,8 @@ def getCourseGrades(email='', password='',sayGrade=False, alertGrade=True):
         tts.save('alert.mp3')
         playsound('alert.mp3')
 
+        
+# this speech recognizer doesn't work very well
 while True:
     r = sr.Recognizer()
     try:
